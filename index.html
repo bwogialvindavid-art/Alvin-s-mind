@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AlvinsMind.com</title>
+<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=Cabinet+Grotesk:wght@300;400;500;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --ink:#05010f;
+  --ink2:#0d0820;
+  --lime:#c8ff00;
+  --violet:#7c2fff;
+  --rose:#ff2d78;
+  --cyan:#00e5ff;
+  --amber:#ffb700;
+  --white:#f5f0ff;
+  --muted:rgba(245,240,255,0.45);
+  --card:rgba(255,255,255,0.035);
+  --border:rgba(255,255,255,0.07);
+}
+
+html{scroll-behavior:smooth;}
+body{
+  background:var(--ink);
+  color:var(--white);
+  font-family:'Space Grotesk',sans-serif;
+  overflow-x:hidden;
+  cursor:none;
+}
+
+/* CUSTOM CURSOR */
+#cursor{
+  width:12px;height:12px;
+  background:var(--lime);
+  border-radius:50%;
+  position:fixed;top:0;left:0;
+  pointer-events:none;z-index:9999;
+  transition:transform 0.1s ease;
+  mix-blend-mode:difference;
+}
+#cursor-ring{
+  width:36px;height:36px;
+  border:1.5px solid var(--lime);
+  border-radius:50%;
+  position:fixed;top:0;left:0;
+  pointer-events:none;z-index:9998;
+  transition:all 0.15s ease;
+  opacity:0.5;
+  mix-blend-mode:difference;
+}
+
+/* NOISE OVERLAY */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:1000;opacity:0.4;
+}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:500;
+  padding:0 3rem;height:68px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(24px);
+  background:rgba(5,1,15,0.75);
+  transition:all 0.3s;
+}
+.logo{
+  font-family:'Cabinet Grotesk',sans-serif;
+  font-weight:900;font-size:1.25rem;
+  letter-spacing:-0.04em;
+  color:var(--white);
+  cursor:pointer;
+  text-decoration:none;
+}
+.logo span{color:var(--lime);}
+.nav-links{display:flex;gap:0.1rem;align-items:center;}
+.nav-links button{
+  background:none;border:none;
+  color:rgba(245,240,255,0.5);
+  font-family:'Space Grotesk',sans-serif;
+  font-size:0.82rem;font-weight:500;
+  padding:0.45rem 1rem;
+  border-radius:100px;
+  cursor:pointer;
+  transition:all 0.2s;
+  letter-spacing:0.01em;
+}
+.nav-links button:hover{color:var(--white);background:rgba(255,255,255,0.06);}
+.nav-links button.active{color:var(--lime);background:rgba(200,255,0,0.08);}
+
+/* PAGE SYSTEM */
+.page{display:none;min-height:100vh;padding-top:68px;position:relative;}
+.page.active{display:block;}
+
+/* PAGE TRANSITION */
+.page-enter{animation:pageIn 0.6s cubic-bezier(0.22,1,0.36,1) both;}
+@keyframes pageIn{
+  from{opacity:0;transform:translateY(32px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+/* ANIMATED BG ORBS */
+.orb{
+  position:absolute;border-radius:50%;
+  filter:blur(80px);pointer-events:none;
+  animation:orbFloat 8s ease-in-out infinite;
+}
+@keyframes orbFloat{
+  0%,100%{transform:translateY(0) scale(1);}
+  50%{transform:translateY(-30px) scale(1.05);}
+}
+.orb1{width:600px;height:600px;background:rgba(124,47,255,0.18);top:-100px;left:-100px;animation-delay:0s;}
+.orb2{width:400px;height:400px;background:rgba(0,229,255,0.1);top:200px;right:-50px;animation-delay:-3s;}
+.orb3{width:500px;height:500px;background:rgba(255,45,120,0.08);bottom:0;left:30%;animation-delay:-5s;}
+
+/* HERO */
+.hero{
+  min-height:calc(100vh - 68px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;
+  padding:3rem 2rem 6rem;
+  position:relative;overflow:hidden;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:0.5rem;
+  background:rgba(200,255,0,0.07);
+  border:1px solid rgba(200,255,0,0.2);
+  border-radius:100px;
+  padding:0.4rem 1.1rem;
+  font-size:0.72rem;
+  font-weight:600;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  color:var(--lime);
+  margin-bottom:2.5rem;
+  animation:badgePop 0.8s cubic-bezier(0.34,1.56,0.64,1) 0.2s both;
+}
+@keyframes badgePop{from{opacity:0;transform:scale(0.7);}to{opacity:1;transform:scale(1);}}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--lime);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+.hero h1{
+  font-family:'Cabinet Grotesk',sans-serif;
+  font-size:clamp(3.2rem,8vw,7rem);
+  font-weight:900;
+  line-height:0.95;
+  letter-spacing:-0.04em;
+  margin-bottom:2rem;
+  animation:titleIn 1s cubic-bezier(0.22,1,0.36,1) 0.4s both;
+}
+@keyframes titleIn{from{opacity:0;transform:translateY(40px);}to{opacity:1;transform:translateY(0);}}
+.hero h1 .line2{color:var(--lime);}
+.hero h1 .line3{
+  -webkit-text-stroke:1.5px rgba(245,240,255,0.3);
+  color:transparent;
+}
+
+.hero-sub{
+  font-size:1.05rem;
+  color:var(--muted);
+  max-width:520px;
+  line-height:1.8;
+  margin-bottom:3rem;
+  animation:titleIn 1s cubic-bezier(0.22,1,0.36,1) 0.6s both;
+}
+
+.hero-btns{
+  display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;
+  animation:titleIn 1s cubic-bezier(0.22,1,0.36,1) 0.8s both;
+}
+.btn-main{
+  background:var(--lime);
+  color:var(--ink);
+  border:none;
+  padding:0.9rem 2.2rem;
+  border-radius:100px;
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:700;font-size:0.9rem;
+  cursor:pointer;
+  transition:all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+  letter-spacing:0.01em;
+}
+.btn-main:hover{transform:scale(1.06);box-shadow:0 0 40px rgba(200,255,0,0.35);}
+.btn-out{
+  background:transparent;
+  color:var(--white);
+  border:1px solid rgba(255,255,255,0.15);
+  padding:0.9rem 2.2rem;
+  border-radius:100px;
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:600;font-size:0.9rem;
+  cursor:pointer;
+  transition:all 0.2s;
+}
+.btn-out:hover{border-color:rgba(255,255,255,0.4);background:rgba(255,255,255,0.06);}
+
+/* SCROLL TICKER */
+.ticker{
+  position:absolute;bottom:0;left:0;right:0;
+  height:48px;
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;
+  overflow:hidden;
+  background:rgba(255,255,255,0.02);
+}
+.ticker-track{
+  display:flex;gap:0;
+  animation:ticker 25s linear infinite;
+  white-space:nowrap;
+}
+@keyframes ticker{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+.ticker-item{
+  padding:0 2.5rem;
+  font-size:0.75rem;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:rgba(245,240,255,0.3);
+  display:flex;align-items:center;gap:1.5rem;
+}
+.ticker-item span{color:var(--lime);font-size:1rem;}
+
+/* SECTIONS */
+.sec{padding:6rem 3rem;max-width:1140px;margin:0 auto;position:relative;}
+.sec-label{
+  font-size:0.68rem;
+  font-weight:700;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--lime);
+  margin-bottom:0.75rem;
+}
+.sec-title{
+  font-family:'Cabinet Grotesk',sans-serif;
+  font-size:clamp(2rem,5vw,3.5rem);
+  font-weight:900;
+  letter-spacing:-0.035em;
+  line-height:1.05;
+  margin-bottom:1rem;
+}
+.sec-sub{color:var(--muted);font-size:1rem;max-width:500px;line-height:1.8;margin-bottom:3.5rem;}
+
+/* CARDS */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:1.25rem;}
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:2rem;
+  position:relative;
+  overflow:hidden;
+  transition:all 0.35s cubic-bezier(0.34,1.2,0.64,1);
+  cursor:default;
+}
+.card::after{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(200,255,0,0.04),transparent 60%);
+  opacity:0;transition:opacity 0.3s;
+}
+.card:hover{transform:translateY(-6px) scale(1.01);border-color:rgba(200,255,0,0.2);}
+.card:hover::after{opacity:1;}
+.card-glow{
+  position:absolute;top:-30px;right:-30px;
+  width:120px;height:120px;
+  border-radius:50%;
+  filter:blur(40px);
+  opacity:0;
+  transition:opacity 0.4s;
+}
+.card:hover .card-glow{opacity:1;}
+.card-num{
+  font-family:'Cabinet Grotesk',sans-serif;
+  font-size:0.7rem;font-weight:700;
+  letter-spacing:0.15em;
+  color:rgba(245,240,255,0.2);
+  margin-bottom:1.5rem;
+}
+.card-icon{
+  width:52px;height:52px;
+  border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;
+  margin-bottom:1.5rem;
+}
+.card h3{
+  font-family:'Cabinet Grotesk',sans-serif;
+  font-size:1.1rem;font-weight:800;
+  letter-spacing:-0.02em;
+  margin-bottom:0.6rem;
+}
+.card p{color:var(--muted);font-size:0.88rem;line-height:1.75;}
+
+/* HOME GRID */
+.home-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  grid-template-rows:auto auto;
+  gap:1.25rem;
+}
+.home-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:2rem;
+  transition:all 0.35s cubic-bezier(0.34,1.2,0.64,1);
+  cursor:pointer;
+  position:relative;overflow:hidden;
+}
+.home-card:hover{transform:translateY(-5px);border-color:rgba(200,255,0,0.25);}
+.home-card.wide{grid-column:span 2;}
+.home-card.tall{grid-row:span 2;}
+.home-card .num{
+  font-family:'Cabinet Grotesk',sans-serif;
+  font-size:3rem;font-weight:900;
+  line-height:1;
+  letter-spacing:-0.05em;
+  color:rgba(200,255,0,0.15);
+  margin-bottom:1rem;
+}
+.home-card h3{
+  font-family:'Cabinet Grotesk',sans-serif;
+  font-size:1.2rem;font-weight:800;
+  letter-spacing:-0.02em;
+  margin-bottom:0.5rem;
+}
+.home-card p{color:var(--muted);font-size:0.88rem;line-height:1.7;}
+.home-card .arrow{
+  position:absolute;bottom:1.5rem;right:1.5rem;
+  width:32px;height:32px;
+  border-radius:50%;
+  background:rgba(200,255,0,0.1);
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.9rem;
+  transition:all 0.2s;
+}
+.home-card:hover .arrow{background:var(--lime);color:var(--ink);}
+
+/* STAT ROW */
+.stat-row{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1px;
+  background:var(--border);
+  border:1px solid var(--border);
+  border-radius:20px;
+  overflow:hidden;
+  margin-bottom:5rem;
+}
+.stat-cell{
+  background:var(--ink2);
+  padding:2.5rem 2rem;
+  text-align:center;
+}
+.stat-num{
+  font-family:'Cabinet Grotesk',sans-serif;
+  font-size:3rem;font-weight:900;
+  letter-spacing:-0.05em;
+  background:linear-gradient(135deg,var(--lime),var(--cyan));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.stat-label{color:var(--muted);font-size:0.82rem;margin-top:0.4rem;line-height:1.5;}
+
+/* QUOTE */
+.quote{
+  background:linear-gradient(135deg,rgba(124,47,255,0.12),rgba(0,229,255,0.06));
+  border:1px solid rgba(124,47,255,0.25);
+  border-radius:24px;
+  padding:3rem;
+  margin:3.5rem 0;
+  position:relative;
+}
+.quote::before{
+  content:'"';
+  position:absolute;top:-20px;left:2rem;
+  font-family:'Cabinet Grotesk',sans-serif;
+  font-size:8rem;font-weight:900;
+  color:var(--violet);
+  opacity:0.3;
+  line-height:1;
+}
+.quote blockquote{
+  font-family:'Cabinet Grotesk',sans-serif;
+  font-size:1.5rem;font-weight:700;
+  letter-spacing:-0.025em;
+  line-height:1.4;
+  position:relative;z-index:1;
+}
+.quote cite{
+  display:block;
+  margin-top:1.25rem;
+  font-size:0.82rem;
+  color:var(--muted);
+  font-style:normal;
+}
+
+/* SPLIT */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;}
+@media(max-width:768px){.split{grid-template-columns:1fr;}.home-grid{grid-template-columns:1fr;}.stat-row{grid-template-columns:1fr 1fr;}.home-card.wide{grid-column:span 1;}.author-layout{grid-template-columns:1fr!important;}}
+
+/* TIMELINE */
+.tl{position:relative;padding-left:1.75rem;}
+.tl::before{content:'';position:absolute;left:0;top:8px;bottom:8px;width:2px;background:linear-gradient(to bottom,var(--lime),var(--violet),transparent);border-radius:2px;}
+.tl-item{position:relative;margin-bottom:2.5rem;}
+.tl-item::before{content:'';position:absolute;left:-2.22rem;top:6px;width:10px;height:10px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 4px rgba(200,255,0,0.12),0 0 16px rgba(200,255,0,0.3);}
+.tl-item h4{font-family:'Cabinet Grotesk',sans-serif;font-size:1rem;font-weight:800;margin-bottom:0.4rem;}
+.tl-item p{color:var(--muted);font-size:0.88rem;line-height:1.7;}
+
+/* PILLS */
+.pills{display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:1.5rem;}
+.pill{
+  padding:0.35rem 1rem;
+  border-radius:100px;
+  font-size:0.78rem;
+  font-weight:600;
+  border:1px solid var(--border);
+  color:var(--muted);
+  background:rgba(255,255,255,0.03);
+  transition:all 0.2s;
+}
+.pill:hover{border-color:rgba(200,255,0,0.3);color:var(--lime);background:rgba(200,255,0,0.06);}
+.pill.lit{background:rgba(200,255,0,0.08);border-color:rgba(200,255,0,0.2);color:var(--lime);}
+
+/* NUM LIST */
+.nlist{list-style:none;display:flex;flex-direction:column;gap:1.5rem;}
+.nlist li{display:flex;gap:1rem;align-items:flex-start;}
+.nnum{
+  min-width:30px;height:30px;
+  border-radius:8px;
+  background:rgba(200,255,0,0.08);
+  border:1px solid rgba(200,255,0,0.15);
+  color:var(--lime);
+  font-size:0.72rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  margin-top:0.1rem;
+  flex-shrink:0;
+}
+.nlist li strong{display:block;font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;}
+.nlist li .ndesc{color:var(--muted);font-size:0.88rem;line-height:1.7;}
+
+/* HIGHLIGHT BOX */
+.hbox{
+  background:linear-gradient(135deg,rgba(124,47,255,0.1),rgba(200,255,0,0.04));
+  border:1px solid rgba(124,47,255,0.2);
+  border-radius:20px;
+  padding:2.5rem;
+  margin:2.5rem 0;
+}
+
+/* WARN BOX */
+.wbox{
+  background:rgba(255,183,0,0.05);
+  border-left:3px solid var(--amber);
+  border-radius:0 14px 14px 0;
+  padding:1.25rem 1.5rem;
+  margin:1.5rem 0;
+}
+.wbox p{font-size:0.9rem;color:#d1d5db;}
+.wbox strong{color:var(--amber);}
+
+/* AUTHOR PAGE */
+.author-layout{
+  display:grid;
+  grid-template-columns:400px 1fr;
+  gap:5rem;
+  align-items:start;
+  padding:4rem 3rem;
+  max-width:1140px;
+  margin:0 auto;
+}
+.author-visual{
+  position:sticky;top:96px;
+}
+.author-card{
+  background:linear-gradient(135deg,rgba(124,47,255,0.15),rgba(0,229,255,0.08));
+  border:1px solid rgba(124,47,255,0.25);
+  border-radius:28px;
+  padding:3rem 2.5rem;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.author-card::before{
+  content:'';
+  position:absolute;top:-60px;left:50%;
+  transform:translateX(-50%);
+  width:240px;height:240px;
+  background:radial-gradient(circle,rgba(124,47,255,0.3),transparent 70%);
+  border-radius:50%;
+}
+.author-emoji{font-size:5rem;margin-bottom:1.5rem;display:block;position:relative;z-index:1;animation:float 4s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
+.author-name{
+  font-family:'Cabinet Grotesk',sans-serif;
+  font-size:2.2rem;font-weight:900;
+  letter-spacing:-0.04em;
+  margin-bottom:0.5rem;
+}
+.author-tag{
+  font-size:0.72rem;font-weight:700;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  color:var(--lime);
+  margin-bottom:2rem;
+  display:block;
+}
+.skill-bars{display:flex;flex-direction:column;gap:0.85rem;text-align:left;margin-top:2rem;}
+.sbar-label{font-size:0.8rem;font-weight:600;margin-bottom:0.35rem;display:flex;justify-content:space-between;}
+.sbar-track{height:4px;background:rgba(255,255,255,0.07);border-radius:100px;overflow:hidden;}
+.sbar-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--lime),var(--cyan));animation:barFill 1.5s cubic-bezier(0.22,1,0.36,1) both;}
+@keyframes barFill{from{width:0;}to{width:var(--w);}}
+
+.trait-grid2{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-top:2rem;}
+.trait2{
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:1rem;
+}
+.trait2 .tkey{color:var(--lime);font-size:0.7rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.3rem;}
+.trait2 p{font-size:0.82rem;color:var(--muted);line-height:1.6;}
+
+/* OBSESSION CARDS */
+.ob-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;margin:2.5rem 0;}
+.ob-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:1.5rem 1rem;
+  text-align:center;
+  transition:all 0.3s cubic-bezier(0.34,1.2,0.64,1);
+  cursor:default;
+}
+.ob-card:hover{transform:scale(1.06);border-color:rgba(200,255,0,0.25);background:rgba(200,255,0,0.04);}
+.ob-card .icon{font-size:2rem;margin-bottom:0.75rem;display:block;}
+.ob-card h4{font-family:'Cabinet Grotesk',sans-serif;font-size:0.9rem;font-weight:800;margin-bottom:0.4rem;}
+.ob-card p{font-size:0.75rem;color:var(--muted);line-height:1.6;}
+
+/* GLOW DIVIDER */
+.gdiv{
+  width:100%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--lime),var(--violet),transparent);
+  opacity:0.3;
+  margin:4rem 0;
+}
+
+/* FOOTER */
+footer{
+  border-top:1px solid var(--border);
+  padding:2rem 3rem;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(255,255,255,0.01);
+}
+.footer-logo{
+  font-family:'Cabinet Grotesk',sans-serif;
+  font-weight:900;
+  color:var(--lime);
+  font-size:0.95rem;
+  letter-spacing:-0.02em;
+}
+footer p{font-size:0.78rem;color:var(--muted);}
+footer button{
+  background:none;border:none;
+  color:var(--lime);
+  font-size:0.78rem;font-weight:600;
+  cursor:pointer;
+  font-family:'Space Grotesk',sans-serif;
+}
+
+/* ICON COLORS */
+.ic-lime{background:rgba(200,255,0,0.1);color:var(--lime);}
+.ic-violet{background:rgba(124,47,255,0.12);color:#a78bfa;}
+.ic-cyan{background:rgba(0,229,255,0.1);color:var(--cyan);}
+.ic-rose{background:rgba(255,45,120,0.1);color:var(--rose);}
+.ic-amber{background:rgba(255,183,0,0.1);color:var(--amber);}
+
+/* PAGE-SPECIFIC HERO COLORS */
+.hero-mh::before{background:radial-gradient(ellipse 70% 60% at 50% 30%,rgba(0,229,255,0.1),transparent 70%);}
+.hero-comm::before{background:radial-gradient(ellipse 70% 60% at 50% 30%,rgba(124,47,255,0.14),transparent 70%);}
+.hero-ai::before{background:radial-gradient(ellipse 70% 60% at 50% 30%,rgba(255,183,0,0.1),transparent 70%);}
+.hero-res::before{background:radial-gradient(ellipse 70% 60% at 50% 30%,rgba(255,45,120,0.1),transparent 70%);}
+
+/* SCAN LINE EFFECT on cards */
+.card-grid .card:nth-child(1){animation-delay:0.05s;}
+.card-grid .card:nth-child(2){animation-delay:0.1s;}
+.card-grid .card:nth-child(3){animation-delay:0.15s;}
+.card-grid .card:nth-child(4){animation-delay:0.2s;}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .ob-grid{grid-template-columns:repeat(3,1fr);}
+  nav{padding:0 1.5rem;}
+  .sec{padding:4rem 1.5rem;}
+  .author-layout{padding:2rem 1.5rem;}
+}
+@media(max-width:600px){
+  .nav-links button span{display:none;}
+  .ob-grid{grid-template-columns:1fr 1fr;}
+  .stat-row{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<nav id="nav">
+  <button class="logo" onclick="go('home')">Alvins<span>Mind</span>.com</button>
+  <div class="nav-links">
+    <button onclick="go('mh')" id="nb-mh">🧠 <span>Mental Health</span></button>
+    <button onclick="go('comm')" id="nb-comm">🌐 <span>Communities</span></button>
+    <button onclick="go('ai')" id="nb-ai">⚡ <span>AI</span></button>
+    <button onclick="go('res')" id="nb-res">🎯 <span>Responsible AI</span></button>
+    <button onclick="go('author')" id="nb-author">✦ <span>Alvin</span></button>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════ PAGE 1: HOME -->
+<div class="page active" id="pg-home">
+  <div class="hero" style="position:relative;overflow:hidden;">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+    <div class="hero-badge"><div class="badge-dot"></div>Mind · Community · Technology · Future</div>
+    <h1>
+      Where <span class="line2">Human Minds</span><br>
+      Meet The <span class="line3">Digital Age</span>
+    </h1>
+    <p class="hero-sub">Mental wellness, tech-powered communities, and AI intelligence — explored with bold thinking and real purpose.</p>
+    <div class="hero-btns">
+      <button class="btn-main" onclick="go('mh')">Explore The Mind →</button>
+      <button class="btn-out" onclick="go('author')">Meet Alvin</button>
+    </div>
+    <div class="ticker">
+      <div class="ticker-track" id="tt"></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="stat-row">
+      <div class="stat-cell"><div class="stat-num">1 in 4</div><div class="stat-label">People globally face a mental health condition</div></div>
+      <div class="stat-cell"><div class="stat-num">5.4B</div><div class="stat-label">Internet users building digital communities</div></div>
+      <div class="stat-cell"><div class="stat-num">300%</div><div class="stat-label">AI adoption growth since 2022</div></div>
+      <div class="stat-cell"><div class="stat-num">2050</div><div class="stat-label">Year AI reshapes every major industry</div></div>
+    </div>
+
+    <div class="sec-label">What We Cover</div>
+    <div class="sec-title">Five Topics.<br>Infinite Impact.</div>
+    <p class="sec-sub">A platform where mental wellness, community power, and AI intelligence converge into real, honest conversation.</p>
+
+    <div class="home-grid">
+      <div class="home-card wide" onclick="go('mh')">
+        <div class="num">01</div>
+        <h3>Human Mental Health</h3>
+        <p>Understanding the mind, building resilience, and breaking the silence around mental wellness in the modern world.</p>
+        <div class="arrow">→</div>
+      </div>
+      <div class="home-card" onclick="go('comm')">
+        <div class="num">02</div>
+        <h3>Digital Communities</h3>
+        <p>How technology rewrites the rules of human connection and collective growth.</p>
+        <div class="arrow">→</div>
+      </div>
+      <div class="home-card" onclick="go('ai')">
+        <div class="num">03</div>
+        <h3>AI Importance</h3>
+        <p>The most transformative force of our generation — and why it matters to you right now.</p>
+        <div class="arrow">→</div>
+      </div>
+      <div class="home-card" onclick="go('res')">
+        <div class="num">04</div>
+        <h3>Responsible AI Use</h3>
+        <p>Harnessing AI's potential ethically — the principles every creator and builder must know.</p>
+        <div class="arrow">→</div>
+      </div>
+      <div class="home-card wide" onclick="go('author')" style="background:linear-gradient(135deg,rgba(200,255,0,0.06),rgba(124,47,255,0.06));border-color:rgba(200,255,0,0.1);">
+        <div class="num" style="color:rgba(200,255,0,0.3);">05</div>
+        <h3>Meet Alvin — The Creator</h3>
+        <p>Young creator. Big ideas. Hacker-energy creativity. Tech-savvy builder mixing imagination, style, and experimentation.</p>
+        <div class="arrow">→</div>
+      </div>
+    </div>
+  </div>
+  <footer>
+    <div class="footer-logo">AlvinsMind.com</div>
+    <p>Built with obsession · 2025</p>
+    <button onclick="go('author')">Meet Alvin →</button>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════════ PAGE 2: MENTAL HEALTH -->
+<div class="page" id="pg-mh">
+  <div class="hero hero-mh" style="min-height:55vh;padding-bottom:2rem;position:relative;overflow:hidden;">
+    <div class="orb" style="width:500px;height:500px;background:rgba(0,229,255,0.1);top:-100px;left:50%;transform:translateX(-50%);animation:orbFloat 7s ease-in-out infinite;"></div>
+    <div class="hero-badge" style="border-color:rgba(0,229,255,0.25);background:rgba(0,229,255,0.06);color:var(--cyan);">Page 01 — Mental Health</div>
+    <h1 style="font-size:clamp(2.5rem,6vw,5rem);">Your Mind <span style="color:var(--cyan);">Matters</span><br>More Than Anything</h1>
+    <p class="hero-sub">Mental health is the foundation — your productivity, relationships, creativity, and happiness all root here. Let's talk about it.</p>
+  </div>
+
+  <div class="sec">
+    <div class="split">
+      <div>
+        <div class="sec-label">The Reality</div>
+        <div class="sec-title">We're Facing a Global Mental Health Crisis</div>
+        <p style="color:var(--muted);font-size:0.95rem;margin-bottom:1.5rem;line-height:1.8;">Nearly a billion people live with a mental health condition. Yet stigma, lack of access, and silence prevent most from seeking help. This is not a personal failure — it's a systemic, global challenge that demands honesty.</p>
+        <div class="quote">
+          <blockquote>"Mental health is not a destination, but a process. It's about how you drive, not where you're going."</blockquote>
+          <cite>— Noam Shpancer, Psychologist</cite>
+        </div>
+      </div>
+      <div>
+        <div class="sec-label" style="margin-bottom:1.5rem;">The Journey</div>
+        <div class="tl">
+          <div class="tl-item"><h4>Awareness & Recognition</h4><p>Learning to identify emotional patterns, stress signals, and when something feels genuinely "off" in your mental state.</p></div>
+          <div class="tl-item"><h4>Breaking the Stigma</h4><p>Normalizing conversations around anxiety, depression, and burnout. Silence is not strength — speaking up is.</p></div>
+          <div class="tl-item"><h4>Seeking Real Support</h4><p>Therapy, community groups, hotlines, and digital tools are all valid paths. No one should go through it alone.</p></div>
+          <div class="tl-item"><h4>Building Resilience</h4><p>Daily habits, boundaries, gratitude, and intentional rest compound into lasting mental strength over time.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gdiv"></div>
+
+    <div class="sec-label">Core Pillars</div>
+    <div class="sec-title">What Genuine Mental Wellness Looks Like</div>
+    <p class="sec-sub">It's not the absence of struggle. It's an active, ongoing state of thriving despite it.</p>
+
+    <div class="card-grid">
+      <div class="card"><div class="card-glow" style="background:var(--cyan);"></div><div class="card-icon ic-cyan">💬</div><h3>Emotional Intelligence</h3><p>Understanding, expressing, and managing your emotions — and empathizing with others — is a skill that can be trained.</p></div>
+      <div class="card"><div class="card-glow" style="background:var(--violet);"></div><div class="card-icon ic-violet">🛡️</div><h3>Healthy Boundaries</h3><p>Saying no is an act of self-respect. Boundaries protect your energy and define the quality of every relationship you hold.</p></div>
+      <div class="card"><div class="card-glow" style="background:var(--lime);"></div><div class="card-icon ic-lime">🌱</div><h3>Mindfulness & Rest</h3><p>Sleep, stillness, and present-moment awareness are not luxuries. They are biological necessities for a functioning human mind.</p></div>
+      <div class="card"><div class="card-glow" style="background:var(--rose);"></div><div class="card-icon ic-rose">🤝</div><h3>Connection & Community</h3><p>Loneliness is as dangerous as smoking 15 cigarettes a day. Humans are wired for deep, meaningful connection.</p></div>
+    </div>
+
+    <div class="hbox" style="margin-top:3.5rem;">
+      <div class="sec-label">For Young People</div>
+      <h3 style="font-family:'Cabinet Grotesk',sans-serif;font-size:1.4rem;font-weight:800;margin-bottom:0.75rem;">Gen Z & Mental Health in the Digital Era</h3>
+      <p style="color:var(--muted);font-size:0.92rem;margin-bottom:1.25rem;line-height:1.8;">Social media pressure, academic overload, climate anxiety, and economic uncertainty create a unique cocktail of mental stress. But this generation is also the most aware, most vocal, and most willing to rewrite the story.</p>
+      <div class="pills">
+        <span class="pill lit">Therapy destigmatized</span>
+        <span class="pill lit">Mental health apps</span>
+        <span class="pill">Online support groups</span>
+        <span class="pill">Digital journaling</span>
+        <span class="pill">Peer counseling</span>
+        <span class="pill">Mindfulness content</span>
+        <span class="pill">AI therapy tools</span>
+      </div>
+    </div>
+  </div>
+  <footer>
+    <div class="footer-logo">AlvinsMind.com</div>
+    <p>Mental Health · Page 01</p>
+    <button onclick="go('comm')">Next: Communities →</button>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════════ PAGE 3: COMMUNITIES -->
+<div class="page" id="pg-comm">
+  <div class="hero hero-comm" style="min-height:55vh;padding-bottom:2rem;position:relative;overflow:hidden;">
+    <div class="orb" style="width:500px;height:500px;background:rgba(124,47,255,0.16);top:-100px;left:50%;transform:translateX(-50%);animation:orbFloat 9s ease-in-out infinite;"></div>
+    <div class="hero-badge" style="border-color:rgba(124,47,255,0.35);background:rgba(124,47,255,0.08);color:#a78bfa;">Page 02 — Communities</div>
+    <h1 style="font-size:clamp(2.5rem,6vw,5rem);">Technology <span style="color:#a78bfa;">Rebuilds</span><br>Human Connection</h1>
+    <p class="hero-sub">In a digital-first world, communities are evolving. Technology isn't replacing human bonds — it's amplifying them beyond geography.</p>
+  </div>
+
+  <div class="sec">
+    <div class="split">
+      <div>
+        <div class="sec-label">The Shift</div>
+        <div class="sec-title">From Neighborhoods<br>to Global Networks</div>
+        <p style="color:var(--muted);font-size:0.95rem;margin-bottom:1.5rem;line-height:1.8;">Traditional communities were defined by geography. Technology dissolved those walls. A teenager in Kampala can now co-build with developers in Berlin, artists in São Paulo, and scientists in Seoul — all before breakfast.</p>
+        <ul class="nlist">
+          <li><span class="nnum">01</span><div><strong>Discord & Slack Spaces</strong><div class="ndesc">Purpose-built digital rooms where people collaborate, learn, and grow in real time around shared obsessions.</div></div></li>
+          <li><span class="nnum">02</span><div><strong>Open Source Movements</strong><div class="ndesc">Thousands of strangers co-creating powerful software. Community as a creative and productive engine.</div></div></li>
+          <li><span class="nnum">03</span><div><strong>Mental Health Networks</strong><div class="ndesc">Apps and forums where people find validation and support they couldn't access locally — anonymously and safely.</div></div></li>
+          <li><span class="nnum">04</span><div><strong>Creator Economies</strong><div class="ndesc">YouTube, TikTok, Substack — communities forming around individual voices and ideas, not institutions.</div></div></li>
+        </ul>
+      </div>
+      <div>
+        <div class="quote" style="margin-bottom:1.5rem;">
+          <blockquote>"Alone we can do so little; together we can do so much — and technology has made 'together' borderless."</blockquote>
+          <cite>— Adapted from Helen Keller</cite>
+        </div>
+        <div class="card" style="margin-bottom:1rem;">
+          <div class="card-icon ic-violet">🌍</div>
+          <h3>Africa's Digital Rise</h3>
+          <p>Sub-Saharan Africa has the world's fastest-growing tech communities. From Lagos to Nairobi to <strong>Kampala</strong>, young builders are creating, connecting, and challenging the status quo. The future is being written here.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon ic-cyan">📱</div>
+          <h3>Mobile-First Communities</h3>
+          <p>With 80%+ of African internet via smartphones, mobile-first platforms are where community lives — WhatsApp groups, Twitter Spaces, and local apps built for real conditions.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="gdiv"></div>
+
+    <div class="sec-label">The Formula</div>
+    <div class="sec-title">What Makes Digital Communities Actually Thrive</div>
+    <p class="sec-sub">Not every online group becomes a true community. These are the ingredients that separate real from hollow.</p>
+    <div class="card-grid">
+      <div class="card"><div class="card-glow" style="background:var(--lime);"></div><div class="card-icon ic-lime">🎯</div><h3>Shared Purpose</h3><p>The strongest communities rally around a mission — not just a topic. Purpose creates belonging; topics create browsing.</p></div>
+      <div class="card"><div class="card-glow" style="background:var(--amber);"></div><div class="card-icon ic-amber">🔥</div><h3>Active Leadership</h3><p>Communities need builders, not just members. Those who contribute and inspire set the culture for everyone else.</p></div>
+      <div class="card"><div class="card-glow" style="background:var(--rose);"></div><div class="card-icon ic-rose">🔗</div><h3>Accessible Tools</h3><p>Low-friction platforms that work on cheap data and basic devices democratize participation and multiply real voices.</p></div>
+      <div class="card"><div class="card-glow" style="background:var(--violet);"></div><div class="card-icon ic-violet">💡</div><h3>Knowledge Sharing</h3><p>Communities that teach each other — tutorials, threads, feedback loops — compound collective intelligence fast.</p></div>
+    </div>
+  </div>
+  <footer>
+    <div class="footer-logo">AlvinsMind.com</div>
+    <p>Communities · Page 02</p>
+    <button onclick="go('ai')">Next: AI Importance →</button>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════════ PAGE 4: AI IMPORTANCE -->
+<div class="page" id="pg-ai">
+  <div class="hero hero-ai" style="min-height:55vh;padding-bottom:2rem;position:relative;overflow:hidden;">
+    <div class="orb" style="width:500px;height:500px;background:rgba(255,183,0,0.1);top:-100px;left:50%;transform:translateX(-50%);animation:orbFloat 6s ease-in-out infinite;"></div>
+    <div class="hero-badge" style="border-color:rgba(255,183,0,0.3);background:rgba(255,183,0,0.07);color:var(--amber);">Page 03 — AI Importance</div>
+    <h1 style="font-size:clamp(2.5rem,6vw,5rem);">AI Isn't The Future.<br><span style="color:var(--amber);">It's Right Now.</span></h1>
+    <p class="hero-sub">Artificial Intelligence is the most powerful tool humanity has ever built. Understanding it isn't optional — it's a survival skill for the 21st century.</p>
+  </div>
+
+  <div class="sec">
+    <div class="split">
+      <div>
+        <div class="sec-label">Why It Matters</div>
+        <div class="sec-title">The Stakes Are<br><span style="color:var(--amber);">Enormous</span></div>
+        <p style="color:var(--muted);font-size:0.95rem;margin-bottom:1.5rem;line-height:1.8;">AI is not just a tech trend. It is fundamentally reshaping medicine, education, finance, creativity, governance, and human identity itself. Those who understand AI will shape tomorrow. Those who don't will be shaped by it.</p>
+        <div class="wbox">
+          <p><strong>The Opportunity Gap:</strong> AI is widening global inequality rapidly. Rich nations and corporations are accelerating while billions remain behind. The time to engage — regardless of where you are — is now, not tomorrow.</p>
+        </div>
+        <p style="color:var(--muted);font-size:0.95rem;margin-top:1.25rem;line-height:1.8;">For young Africans especially, AI represents a leapfrog opportunity unlike anything before. You don't need decades of legacy infrastructure — you need a device, internet access, and the will to build.</p>
+      </div>
+      <div>
+        <div class="sec-label" style="margin-bottom:1.25rem;">Impact Sectors</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+          <div class="card" style="padding:1.5rem;"><div style="font-size:1.75rem;margin-bottom:0.6rem;">🏥</div><h3 style="font-size:0.95rem;">Healthcare</h3><p style="font-size:0.82rem;">Earlier, more accurate disease detection than human diagnosis in many fields.</p></div>
+          <div class="card" style="padding:1.5rem;"><div style="font-size:1.75rem;margin-bottom:0.6rem;">📚</div><h3 style="font-size:0.95rem;">Education</h3><p style="font-size:0.82rem;">Personalized learning at scale — every student gets a world-class tutor.</p></div>
+          <div class="card" style="padding:1.5rem;"><div style="font-size:1.75rem;margin-bottom:0.6rem;">🎨</div><h3 style="font-size:0.95rem;">Creativity</h3><p style="font-size:0.82rem;">Music, art, code, stories — AI as a collaborative creative partner.</p></div>
+          <div class="card" style="padding:1.5rem;"><div style="font-size:1.75rem;margin-bottom:0.6rem;">🌾</div><h3 style="font-size:0.95rem;">Agriculture</h3><p style="font-size:0.82rem;">Precision farming, crop disease detection, yield optimization via AI.</p></div>
+          <div class="card" style="padding:1.5rem;"><div style="font-size:1.75rem;margin-bottom:0.6rem;">🏛️</div><h3 style="font-size:0.95rem;">Governance</h3><p style="font-size:0.82rem;">Fraud detection to policy simulation — AI reshaping how societies function.</p></div>
+          <div class="card" style="padding:1.5rem;"><div style="font-size:1.75rem;margin-bottom:0.6rem;">💻</div><h3 style="font-size:0.95rem;">Software Dev</h3><p style="font-size:0.82rem;">AI writes code, finds bugs, ships products faster than ever before.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quote" style="margin:3.5rem 0;">
+      <blockquote>"AI is probably the most transformative technology humanity has developed. The question isn't whether it will change your life — it's whether you'll be the one directing the change."</blockquote>
+      <cite>— Alvin, AlvinsMind.com</cite>
+    </div>
+
+    <div class="sec-label">For Builders & Dreamers</div>
+    <div class="sec-title">How to Position Yourself in an AI World</div>
+    <p class="sec-sub">You don't need a PhD. You need curiosity, consistency, and willingness to experiment and ship.</p>
+    <ul class="nlist">
+      <li><span class="nnum">01</span><div><strong>Start Using AI Tools Today</strong><div class="ndesc">ChatGPT, Claude, Midjourney, Copilot — available now. Fluency comes from practice, not theory alone.</div></div></li>
+      <li><span class="nnum">02</span><div><strong>Learn to Prompt Powerfully</strong><div class="ndesc">Clear communication with AI is a skill. Prompt engineering is one of the highest-value abilities in today's market.</div></div></li>
+      <li><span class="nnum">03</span><div><strong>Build Things With It</strong><div class="ndesc">Don't just consume — create. Use AI to ship apps, content, tools, and businesses. Action beats endless preparation.</div></div></li>
+      <li><span class="nnum">04</span><div><strong>Stay Critically Aware</strong><div class="ndesc">Understand AI's limits, biases, and risks. An informed builder is infinitely more powerful than a blind enthusiast.</div></div></li>
+    </ul>
+  </div>
+  <footer>
+    <div class="footer-logo">AlvinsMind.com</div>
+    <p>AI Importance · Page 03</p>
+    <button onclick="go('res')">Next: Responsible AI →</button>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════════ PAGE 5: RESPONSIBLE AI -->
+<div class="page" id="pg-res">
+  <div class="hero hero-res" style="min-height:55vh;padding-bottom:2rem;position:relative;overflow:hidden;">
+    <div class="orb" style="width:500px;height:500px;background:rgba(255,45,120,0.1);top:-100px;left:50%;transform:translateX(-50%);animation:orbFloat 8s ease-in-out infinite;"></div>
+    <div class="hero-badge" style="border-color:rgba(255,45,120,0.3);background:rgba(255,45,120,0.06);color:var(--rose);">Page 04 — Responsible AI</div>
+    <h1 style="font-size:clamp(2.5rem,6vw,5rem);">Great Power.<br><span style="color:var(--rose);">Greater Responsibility.</span></h1>
+    <p class="hero-sub">AI can uplift humanity or harm it at scale. The difference lies entirely in the awareness and ethics we bring to every use.</p>
+  </div>
+
+  <div class="sec">
+    <div class="split">
+      <div>
+        <div class="sec-label">The Core Challenge</div>
+        <div class="sec-title">AI Amplifies<br>What We Feed It</div>
+        <p style="color:var(--muted);font-size:0.95rem;margin-bottom:1.25rem;line-height:1.8;">AI systems inherit human biases from training data. An AI trained on flawed information produces flawed — and now scaled — outputs. Garbage in, garbage out at civilizational speed.</p>
+        <p style="color:var(--muted);font-size:0.95rem;margin-bottom:1.5rem;line-height:1.8;">Beyond bias: misinformation at mass scale, job displacement, surveillance systems, deepfakes, and AI weaponization are real. None are inevitable — but all are possible without intentional guardrails and ethical awareness.</p>
+        <div class="wbox">
+          <p><strong>Misinformation Risk:</strong> AI generates convincing fake news, images, and voices in seconds. Critical media literacy is now a survival skill — not an optional extra.</p>
+        </div>
+      </div>
+      <div>
+        <div class="sec-label">The Four Principles</div>
+        <div style="display:flex;flex-direction:column;gap:0.85rem;">
+          <div class="card"><div class="card-icon ic-lime">⚖️</div><h3>Fairness & Equity</h3><p>AI must not discriminate by race, gender, age, or geography. If it only works well for some groups, that's a problem worth naming loudly.</p></div>
+          <div class="card"><div class="card-icon ic-violet">🔍</div><h3>Transparency</h3><p>Users should know when they're interacting with AI. Hiding AI output as human-created erodes the trust societies run on.</p></div>
+          <div class="card"><div class="card-icon ic-amber">🔒</div><h3>Privacy & Consent</h3><p>Data used to train AI must be consensual. Your face, voice, and behavior are yours — and deserve genuine legal protection.</p></div>
+          <div class="card"><div class="card-icon ic-rose">🌍</div><h3>Impact Thinking</h3><p>Before deploying AI: who benefits? Who could be harmed? What if it's misused? Ethics is not a checkbox — it's a continuous question.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gdiv"></div>
+
+    <div class="sec-label">Practical Guide</div>
+    <div class="sec-title">How to Use AI Properly</div>
+    <p class="sec-sub">Student, creator, developer, or entrepreneur — these principles make you a responsible, powerful AI user.</p>
+    <div class="card-grid">
+      <div class="card"><div class="card-glow" style="background:var(--lime);"></div><div class="card-icon ic-lime">✅</div><h3>Verify Before You Share</h3><p>AI can hallucinate facts with total confidence. Always verify critical information — especially health, legal, or financial guidance — against real sources.</p></div>
+      <div class="card"><div class="card-glow" style="background:var(--violet);"></div><div class="card-icon ic-violet">🧩</div><h3>Tool, Not Crutch</h3><p>AI enhances human thinking — it shouldn't replace it. Use AI to draft, brainstorm, prototype. Let your judgment and empathy do the final shaping.</p></div>
+      <div class="card"><div class="card-glow" style="background:var(--rose);"></div><div class="card-icon ic-rose">🎭</div><h3>Disclose AI Content</h3><p>If AI wrote it or generated it — say so. Especially in academic, journalistic, and professional contexts. Transparency equals integrity.</p></div>
+      <div class="card"><div class="card-glow" style="background:var(--amber);"></div><div class="card-icon ic-amber">🌍</div><h3>Think About Impact</h3><p>Before deploying: who benefits? Who could be harmed? Could this be misused? Ethics is not a constraint — it's a competitive advantage in a world built on trust.</p></div>
+    </div>
+  </div>
+  <footer>
+    <div class="footer-logo">AlvinsMind.com</div>
+    <p>Responsible AI · Page 04</p>
+    <button onclick="go('author')">Meet Alvin →</button>
+  </footer>
+</div>
+
+<!-- ═══════════════════════════════════════ PAGE 6: AUTHOR -->
+<div class="page" id="pg-author">
+  <div class="author-layout">
+    <div class="author-visual">
+      <div class="author-card">
+        <span class="author-emoji">🚀</span>
+        <div class="author-name">Alvin</div>
+        <span class="author-tag">// Creator · Builder · Visionary</span>
+        <p style="color:var(--muted);font-size:0.88rem;line-height:1.75;">A tech-savvy creative mixing imagination, style, and experimentation to build attention-grabbing ideas. Based in the future — operating in the present.</p>
+        <div class="skill-bars">
+          <div><div class="sbar-label"><span>Web Design</span><span style="color:var(--lime);">95%</span></div><div class="sbar-track"><div class="sbar-fill" style="--w:95%;animation-delay:0.2s;"></div></div></div>
+          <div><div class="sbar-label"><span>AI & Automation</span><span style="color:var(--lime);">90%</span></div><div class="sbar-track"><div class="sbar-fill" style="--w:90%;animation-delay:0.4s;"></div></div></div>
+          <div><div class="sbar-label"><span>Visual Creativity</span><span style="color:var(--lime);">97%</span></div><div class="sbar-track"><div class="sbar-fill" style="--w:97%;animation-delay:0.6s;"></div></div></div>
+          <div><div class="sbar-label"><span>Coding</span><span style="color:var(--lime);">88%</span></div><div class="sbar-track"><div class="sbar-fill" style="--w:88%;animation-delay:0.8s;"></div></div></div>
+          <div><div class="sbar-label"><span>Community Building</span><span style="color:var(--lime);">85%</span></div><div class="sbar-track"><div class="sbar-fill" style="--w:85%;animation-delay:1s;"></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="sec-label" style="padding-top:1rem;">About The Creator</div>
+      <div class="sec-title" style="margin-bottom:1rem;">Young Creator.<br><span style="color:var(--lime);">Big Ideas.</span><br>Hacker Energy.</div>
+      <p style="color:var(--muted);font-size:0.95rem;margin-bottom:1.25rem;line-height:1.8;">Alvin doesn't wait for permission. He experiments, ships fast, breaks things, and builds better. His work lives at the intersection of aesthetic beauty and technical execution — the place where code becomes art.</p>
+      <p style="color:var(--muted);font-size:0.95rem;margin-bottom:1.25rem;line-height:1.8;">He believes the best digital experiences are the ones that feel alive — interactive, bold, and made with genuine energy. Not templates. Not defaults. Something that makes people stop and ask: <em style="color:var(--white);">"who built this?"</em></p>
+      <p style="color:var(--muted);font-size:0.95rem;margin-bottom:2.5rem;line-height:1.8;">Whether it's a flashy HTML project, an AI experiment, or a community-driven idea — Alvin approaches everything with the same hacker-energy: figure it out, make it impressive, push it further.</p>
+
+      <div class="trait-grid2">
+        <div class="trait2"><div class="tkey">Curious</div><p>Keeps pushing projects further instead of settling for "good enough." Always asking what's next.</p></div>
+        <div class="trait2"><div class="tkey">Competitive</div><p>Tests limits — fun way. Constantly asking "can this be even better?" and then proving it.</p></div>
+        <div class="trait2"><div class="tkey">Social & Expressive</div><p>Warm, personal, and real — cares about people and keeps everything human.</p></div>
+        <div class="trait2"><div class="tkey">Vision-Driven</div><p>Ideas centered on impact, creativity, standing out, and building things that matter.</p></div>
+      </div>
+
+      <div class="gdiv"></div>
+
+      <div class="sec-label">The Five Obsessions</div>
+      <div class="ob-grid">
+        <div class="ob-card"><span class="icon">💻</span><h4>Coding</h4><p>Logic into living, breathing digital things.</p></div>
+        <div class="ob-card"><span class="icon">🎨</span><h4>Design</h4><p>Sleek, futuristic, bold aesthetics that hit.</p></div>
+        <div class="ob-card"><span class="icon">🤖</span><h4>AI</h4><p>AI as a genuine tool for bold creation.</p></div>
+        <div class="ob-card"><span class="icon">🌍</span><h4>Community</h4><p>Building things that bring people together.</p></div>
+        <div class="ob-card"><span class="icon">⚡</span><h4>Experiments</h4><p>Random ideas → impressive realities.</p></div>
+      </div>
+
+      <div class="quote" style="margin-top:2rem;">
+        <blockquote>"I don't build for approval. I build because a blank screen is an open challenge — and walking away from a challenge isn't something I do."</blockquote>
+        <cite>— Alvin</cite>
+      </div>
+
+      <div class="hbox">
+        <div class="sec-label">AlvinsMind.com</div>
+        <p style="color:var(--muted);font-size:0.92rem;line-height:1.8;">This platform is living proof of Alvin's belief: one person with ideas, tools, and relentless energy can build something that genuinely matters. AlvinsMind.com is the proof of concept. The best work is still coming.</p>
+        <div class="pills" style="margin-top:1rem;">
+          <span class="pill lit">Web Design</span>
+          <span class="pill lit">AI & Automation</span>
+          <span class="pill lit">Visual Creativity</span>
+          <span class="pill">HTML/CSS/JS</span>
+          <span class="pill">Image Editing</span>
+          <span class="pill">Community Builder</span>
+          <span class="pill">Entrepreneur Mindset</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer style="margin-top:2rem;">
+    <div class="footer-logo">AlvinsMind.com</div>
+    <p>Built with obsession by Alvin · 2025</p>
+    <button onclick="go('home')">← Back to Home</button>
+  </footer>
+</div>
+
+<script>
+// CURSOR
+const cur=document.getElementById('cursor');
+const ring=document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  cur.style.left=(mx-6)+'px';cur.style.top=(my-6)+'px';
+});
+function animRing(){
+  rx+=(mx-rx-18)*0.12;
+  ry+=(my-ry-18)*0.12;
+  ring.style.left=rx+'px';ring.style.top=ry+'px';
+  requestAnimationFrame(animRing);
+}
+animRing();
+document.querySelectorAll('button,a,.card,.home-card,.ob-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cur.style.transform='scale(2.5)';ring.style.transform='scale(1.5)';});
+  el.addEventListener('mouseleave',()=>{cur.style.transform='scale(1)';ring.style.transform='scale(1)';});
+});
+
+// TICKER
+const items=['Mental Health','Community Power','AI Intelligence','Responsible Tech','Alvin\'s Vision','Digital Futures','Human Connection','Creative Tech'];
+const tt=document.getElementById('tt');
+const full=[...items,...items,...items,...items].map(t=>`<div class="ticker-item"><span>✦</span>${t}</div>`).join('');
+tt.innerHTML=full+full;
+
+// PAGE NAV
+const pages={home:'pg-home',mh:'pg-mh',comm:'pg-comm',ai:'pg-ai',res:'pg-res',author:'pg-author'};
+const navBtns={mh:'nb-mh',comm:'nb-comm',ai:'nb-ai',res:'nb-res',author:'nb-author'};
+
+function go(id){
+  Object.values(pages).forEach(p=>{
+    const el=document.getElementById(p);
+    if(el){el.classList.remove('active','page-enter');}
+  });
+  Object.values(navBtns).forEach(n=>{
+    const el=document.getElementById(n);
+    if(el) el.classList.remove('active');
+  });
+  const target=document.getElementById(pages[id]);
+  if(target){
+    target.classList.add('active');
+    void target.offsetWidth;
+    target.classList.add('page-enter');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  if(navBtns[id]){
+    const nb=document.getElementById(navBtns[id]);
+    if(nb) nb.classList.add('active');
+  }
+}
+
+// ANIMATE STATS ON VISIBILITY
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.style.animationPlayState='running';
+    }
+  });
+},{threshold:0.2});
+document.querySelectorAll('.sbar-fill').forEach(b=>{
+  b.style.animationPlayState='paused';
+  observer.observe(b);
+});
+
+// NAV SCROLL EFFECT
+window.addEventListener('scroll',()=>{
+  const nav=document.getElementById('nav');
+  nav.style.background=window.scrollY>20?'rgba(5,1,15,0.95)':'rgba(5,1,15,0.75)';
+});
+</script>
+</body>
+</html>
